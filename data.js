@@ -1,7 +1,7 @@
 var dataset = [];  						 //Initialize empty array
 
 function resetData(){
-    dataset = []
+    dataset = [];
     for (var i = 0; i < 20; i++) {			 //Loop 25 times
       var newNumber = Math.floor(Math.random() * 30);  //New random number (0-30)
       dataset.push(newNumber);			 //Add new number to array

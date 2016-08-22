@@ -21,16 +21,23 @@
 
     var xScale = d3.scale.ordinal() //an ordinal scale instead of linear
                   .domain(d3.range(dataset.length + 1))
-                  .rangeRoundBands([40, w], 0.05); //discreet outputs are rounded to the nearest integer
+                  .rangeRoundBands([margin, w], 0.05); //discreet outputs are rounded to the nearest integer
 
-    var yScale = d3.scale.linear()
-                  .domain([0, d3.max(dataset)])
-                  .range([h - margin, 0]);
+    var yScale = d3.scale.linear() //normalization:  For example, with 365 days in the year, day number 310 maps to about 0.85, or 85 percent of the way through the year.
+                  .domain([0, d3.max(dataset)]) //INPUT
+                  .range([h - margin, 0]); //OUTPUT
+
+// var scale = d3.scale.linear()
+//                     .domain([100, 500])
+//                     .range([10, 350]);
+// scale(100);  //Returns 10
+// scale(300);  //Returns 180
+// scale(500);  //Returns 350
 
     //Define x-axis
     var xAxis = d3.svg.axis()
                   .scale(xScale) //which scale to operate
-                  .ticks(5)
+                  .ticks(5) //how many lines on the axis
                   .tickFormat(formatAs);
 
     //Define Y axis
