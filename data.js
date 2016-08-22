@@ -56,9 +56,11 @@ d3.selectAll("input")
         //Enter…
         bars.enter() //References the enter selection (a subset of the update selection)
           .append("rect")	//Creates a new rect
-          .attr("x", w)	//Sets the initial x position of the rect beyond the far right edge of the SVG
+          .attr("x", function(d, i){
+            return xScale(i);
+          })	//Sets the initial x position of the rect beyond the far right edge of the SVG
           .attr("y", function(d) {	//Sets the y value, based on the updated yScale
-            return h - yScale(d);
+            return h - yScale(d) - margin;
           })
           .attr("width", xScale.rangeBand()) //Sets the width value, based on the updated xScale
           .attr("height", function(d) {	//Sets the height value, based on the updated yScale
@@ -75,11 +77,14 @@ d3.selectAll("input")
             return xScale(i);
           })
           .attr("y", function(d) { //Set new y position, based on the updated yScale
-            return h - yScale(d);
+            return h - yScale(d) - margin;
           })
           .attr("width", xScale.rangeBand()) //Set new width value, based on the updated xScale
           .attr("height", function(d) { //Set new height value, based on the updated yScale
             return yScale(d);
+          })
+          .attr("fill", function(d) {	//Sets the fill value
+            return "rgb(0, 0, " + (d * 10) + ")";
           });
           //Exit…
       bars.exit()
@@ -118,4 +123,15 @@ d3.selectAll("input")
           .attr("x", -xScale.rangeBand())
           .remove();
 
+          //Create Y axis
+          svg.append("g")
+              .attr("class", "axis")
+              .attr("transform", "translate(" + margin + ",0)")
+              .call(yAxis);
+              // create x-axis
+              svg.enter()
+              .append("g")
+                  .attr('class', 'axis') //assigns 'x' and 'axis' class
+                  .attr("transform", "translate(0," + (h - margin) + ")") //pushes line to bottom
+                  .call(xAxis); //takes the incoming selection and hands it off to any function
 });

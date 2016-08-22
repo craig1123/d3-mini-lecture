@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>d3</title>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <input type="button" name="name" value="addData" id="addData">
@@ -13,30 +14,45 @@
     <script type="text/javascript">
 
     //Width and height
-    var w = 600;
-    var h = 250;
-    
+    var w = 700;
+    var h = 400;
+    var margin = 40;
+    var formatAs = d3.format(".1"); //when data is messy
+
     var xScale = d3.scale.ordinal() //an ordinal scale instead of linear
-                  .domain(d3.range(dataset.length))
-                  .rangeRoundBands([0, w], 0.05); //discreet outputs are rounded to the nearest integer
+                  .domain(d3.range(dataset.length + 1))
+                  .rangeRoundBands([40, w], 0.05); //discreet outputs are rounded to the nearest integer
 
     var yScale = d3.scale.linear()
                   .domain([0, d3.max(dataset)])
-                  .range([0, h]);
+                  .range([h - margin, 0]);
+
+    //Define x-axis
+    var xAxis = d3.svg.axis()
+                  .scale(xScale) //which scale to operate
+                  .ticks(5)
+                  .tickFormat(formatAs);
+
+    //Define Y axis
+    var yAxis = d3.svg.axis()
+                      .scale(yScale)
+                      .orient("left")
+                      .ticks(5)
+                      .tickFormat(formatAs);
 
     //Create SVG element
     var svg = d3.select("body")
               .append("svg")
               .attr("width", w)
               .attr("height", h);
-
+function reset(){
     svg.selectAll("rect")
       .data(dataset)
       .enter()
       .append("rect")
       .attr({
           x: function(d, i) { return xScale(i); }, //bar width
-          y: function(d) { return h - yScale(d); }, //sets height and flips it
+          y: function(d) { return h - yScale(d) - margin; }, //sets height and flips it
           width: xScale.rangeBand(), //width in between bars
           height: function(d) { return yScale(d) },
           fill: function(d) { return "rgb(0, 0, " + (d * 10) + ")"; }
@@ -72,9 +88,20 @@
             sortBars();
     })
 
+    // create x-axis
+    svg.append("g")
+        .attr('class', 'axis') //assigns 'x' and 'axis' class
+        .attr("transform", "translate(0," + (h - margin) + ")") //pushes line to bottom
+        .call(xAxis); //takes the incoming selection and hands it off to any function
 
+    //Create Y axis
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(" + margin + ",0)")
+        .call(yAxis);
 
-
+}
+reset()
     </script>
   </body>
 </html>
